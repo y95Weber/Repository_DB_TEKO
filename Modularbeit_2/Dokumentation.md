@@ -64,31 +64,35 @@ Da die PostgreSQL-Instanz auf einer separaten Debian-VM läuft und remote vom Wi
   - `listen_addresses = '*'` in `postgresql.conf` gesetzt, um Remote-Verbindungen zuzulassen
   - `systemctl enable --now postgresql` sorgt für automatischen Start beim Booten
 ---
- 
-## 4. Datenmodellierung
- 
-### 4.1 ER-Modell (konzeptionell)
- 
-![ER-Modell](./diagrams/er-modell.png)
- 
-Kurzbeschreibung der Entitäten:
+ ## 4. Datenmodellierung
+
+### 4.1 Crow's-Foot-Diagramm
+
+![Crow's Foot Diagramm](Anhang/Bilder/CrowsFoot.png)
+
+Das Diagramm zeigt das logische Datenmodell in Crow's-Foot-Notation: alle sechs Tabellen mit ihren Attributen, Primärschlüsseln (`PK`), Fremdschlüsseln (`FK`) sowie den Kardinalitäten zwischen den Tabellen.
+
+**Entitäten:**
+
 - **Tierart** – Art des verarbeiteten Tieres (z. B. Rind, Schwein)
 - **Zuschnitt** – Zuschnittsart des Fleischstücks (z. B. Filet, Hüfte)
 - **Kunde** – Kundendaten inkl. Kontakt- und Lieferadresse
 - **Produkt** – Verkaufbares Produkt, verknüpft mit genau einer Tierart und einem Zuschnitt
 - **Bestellung** – Bestellkopf, verknüpft mit genau einem Kunden
-- **Bestellposition** – Auflösung der M:N-Beziehung zwischen Bestellung und Produkt, inkl. Menge und historischem Einzelpreis
-### 4.2 Crow's-Foot-Diagramm (logisch)
- 
-![Crow's Foot Diagramm](./diagrams/crows-foot.png)
- 
-Das Diagramm zeigt die Kardinalitäten der Beziehungen zwischen den sechs Tabellen, inkl. Primär- und Fremdschlüssel:
- 
-- `Tierart` 1 : N `Produkt`
-- `Zuschnitt` 1 : N `Produkt`
-- `Produkt` 1 : N `Bestellposition`
-- `Bestellung` 1 : N `Bestellposition`
-- `Kunde` 1 : N `Bestellung`
+- **Bestellposition** – Auflösung der M:N-Beziehung zwischen Bestellung und Produkt, inkl. Menge und historischem Einzelpreis; zusammengesetzter Primärschlüssel aus `BestellungID` und `ProduktID`
+
+**Beziehungen und Kardinalitäten:**
+
+| Beziehung | Kardinalität | Bedeutung |
+|---|---|---|
+| `Tierart` → `Produkt` | 1 : N | Eine Tierart kann in mehreren Produkten vorkommen |
+| `Zuschnitt` → `Produkt` | 1 : N | Ein Zuschnitt kann in mehreren Produkten vorkommen |
+| `Kunde` → `Bestellung` | 1 : N | Ein Kunde kann mehrere Bestellungen aufgeben |
+| `Bestellung` → `Bestellposition` | 1 : N | Eine Bestellung enthält mehrere Bestellpositionen |
+| `Produkt` → `Bestellposition` | 1 : N | Ein Produkt kann in mehreren Bestellpositionen vorkommen |
+
+Da `Bestellposition` sowohl `BestellungID` als auch `ProduktID` als Teil ihres Primärschlüssels und gleichzeitig als Fremdschlüssel führt, löst diese Tabelle die eigentliche M:N-Beziehung zwischen `Bestellung` und `Produkt` sauber in zwei 1:N-Beziehungen auf.
+
 ---
  
 ## 5. Normalisierung
