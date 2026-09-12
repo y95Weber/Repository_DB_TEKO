@@ -1,0 +1,4 @@
+"kundeid";"vorname";"nachname";"email";"telefon";"strasse";"plz";"ort"
+1;Max;Muster;max.muster@email.ch;;Bahnhofstrasse 12;"3011";Bern
+2;Anna;Beispiel;anna.beispiel@email.ch;;Seestrasse 5;"8001";Zürich
+3;Christian;Locher;hacker.pro@database.king,ch;;Querystrasse 80;"3001";Bern

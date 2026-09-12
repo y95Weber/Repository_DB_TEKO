@@ -1,0 +1,10 @@
+"produktid";"name";"preisprokg";"verpackungsgewicht";"beschreibung";"tierartid";"zuschnittid"
+1;Rindsfilet;65.00;0.40;Zartes Filet vom Rind;1;1
+2;Entrecôte Rind;48.00;0.35;Saftiges Entrecôte;1;2
+3;Rinds-Voressen;22.00;1.00;Für Eintöpfe geeignet;1;5
+4;Schweinsschulter;18.50;1.20;Ideal zum Braten;2;6
+5;Schweinskotelett;21.00;0.90;Klassisches Kotelett;2;9
+6;Lammgigot;38.00;1.50;Ganzer Lammschlegel;3;10
+7;Lammrack;55.00;0.60;Feines Rack vom Lamm;3;11
+8;Pouletbrust;19.90;0.50;Mageres Geflügelfilet;4;13
+9;Pouletschenkel;14.50;0.80;Saftige Schenkel;4;14

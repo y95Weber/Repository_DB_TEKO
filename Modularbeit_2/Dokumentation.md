@@ -190,4 +190,10 @@ CREATE TABLE Bestellposition (
  
 ## Anhang
  
-- 
+Der Anhang ist wie folgt gegliedert.
+
+Direkt-Link zu --> [Crow's-Foot-Diagramm](Anhang/Bilder/CrowsFoot.png)
+
+Pfad zu --> [CSV-Dateien](Anhang/Dateien/Dateien_CSV)
+
+Direkt-Link zu --> [SQL-Queries](Anhang/Dateien/meat_shop_querys.sql)
