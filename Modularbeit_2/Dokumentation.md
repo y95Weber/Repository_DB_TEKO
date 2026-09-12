@@ -1,11 +1,11 @@
-# Datenbankprojekt: Fleisch-Onlineshop
+# Datenbankprojekt: Meat.ch
  
 ## 1. Einleitung
  
 Im Rahmen dieses Schulprojekts wurde eine relationale Datenbank für einen fiktiven Online-Fleisch-/Metzgereishop (`meat_shop`) entworfen und implementiert. Ziel war es, ein vollständiges Datenmodell zu entwickeln und dieses als funktionsfähige PostgreSQL-Datenbank umzusetzen.
  
 **Projektumfang:**
-- Entwurf eines ER-Modells und eines logischen Crow's-Foot-Diagramms
+- Entwurf eines logischen Crow's-Foot-Diagramms als Datenmodell (auf ein separates konzeptionelles ER-Modell wurde verzichtet, da das Crow's-Foot-Diagramm bereits Attribute, Schlüssel und Kardinalitäten abbildet)
 - Implementierung des Schemas in PostgreSQL (Standard-SQL, DDL)
 - Kein GUI, keine Anwendungslogik
 - Keine erweiterten Datenbankfeatures (z. B. Trigger, Stored Procedures)
@@ -67,28 +67,32 @@ Da die PostgreSQL-Instanz auf einer separaten Debian-VM läuft und remote vom Wi
  
 ## 4. Datenmodellierung
  
-### 4.1 ER-Modell (konzeptionell)
+### 4.1 Crow's-Foot-Diagramm
  
-![ER-Modell](./diagrams/er-modell.png)
+![Crow's-Foot-Diagramm](Anhang/Bilder/CrowsFoot.png)
  
-Kurzbeschreibung der Entitäten:
+Das Diagramm zeigt das logische Datenmodell in Crow's-Foot-Notation: alle sechs Tabellen mit ihren Attributen, Primärschlüsseln (`PK`), Fremdschlüsseln (`FK`) sowie den Kardinalitäten zwischen den Tabellen.
+ 
+**Entitäten:**
+ 
 - **Tierart** – Art des verarbeiteten Tieres (z. B. Rind, Schwein)
 - **Zuschnitt** – Zuschnittsart des Fleischstücks (z. B. Filet, Hüfte)
-- **Kunde** – Kundendaten inkl. Kontakt- und Lieferadresse
+- **Kunde** – Kundendaten inkl. Kontaktdaten und Adresse
 - **Produkt** – Verkaufbares Produkt, verknüpft mit genau einer Tierart und einem Zuschnitt
 - **Bestellung** – Bestellkopf, verknüpft mit genau einem Kunden
-- **Bestellposition** – Auflösung der M:N-Beziehung zwischen Bestellung und Produkt, inkl. Menge und historischem Einzelpreis
-### 4.2 Crow's-Foot-Diagramm (logisch)
+- **Bestellposition** – Auflösung der M:N-Beziehung zwischen Bestellung und Produkt, inkl. Menge und historischem Einzelpreis; zusammengesetzter Primärschlüssel aus `BestellungID` und `ProduktID`
+**Beziehungen und Kardinalitäten:**
  
-![Crow's Foot Diagramm](./diagrams/crows-foot.png)
+| Beziehung | Kardinalität | Bedeutung |
+|---|---|---|
+| `Tierart` → `Produkt` | 1 : N | Eine Tierart kann in mehreren Produkten vorkommen |
+| `Zuschnitt` → `Produkt` | 1 : N | Ein Zuschnitt kann in mehreren Produkten vorkommen |
+| `Kunde` → `Bestellung` | 1 : N | Ein Kunde kann mehrere Bestellungen aufgeben |
+| `Bestellung` → `Bestellposition` | 1 : N | Eine Bestellung enthält mehrere Bestellpositionen |
+| `Produkt` → `Bestellposition` | 1 : N | Ein Produkt kann in mehreren Bestellpositionen vorkommen |
  
-Das Diagramm zeigt die Kardinalitäten der Beziehungen zwischen den sechs Tabellen, inkl. Primär- und Fremdschlüssel:
+Da `Bestellposition` sowohl `BestellungID` als auch `ProduktID` als Teil ihres Primärschlüssels und gleichzeitig als Fremdschlüssel führt, löst diese Tabelle die eigentliche M:N-Beziehung zwischen `Bestellung` und `Produkt` sauber in zwei 1:N-Beziehungen auf.
  
-- `Tierart` 1 : N `Produkt`
-- `Zuschnitt` 1 : N `Produkt`
-- `Produkt` 1 : N `Bestellposition`
-- `Bestellung` 1 : N `Bestellposition`
-- `Kunde` 1 : N `Bestellung`
 ---
  
 ## 5. Normalisierung
@@ -184,10 +188,27 @@ CREATE TABLE Bestellposition (
  
 ## 7. Fazit
  
-*(Abschließende Reflexion: Was wurde erreicht, welche Erkenntnisse wurden gewonnen, was könnte optional erweitert werden.)*
+Im Rahmen dieses Projekts wurde ein vollständiges relationales Datenmodell für einen fiktiven Online-Fleisch-/Metzgereishop entworfen und als funktionsfähige PostgreSQL-Datenbank umgesetzt. Das sechs-Tabellen-Schema erfüllt die Dritte Normalform, mit einer bewussten Ausnahme (`Einzelpreis`), die zur Bewahrung historischer Bestelldaten notwendig ist.
+ 
+Ein wichtiger Erkenntnisgewinn lag in der praktischen Administration von PostgreSQL: Insbesondere die seit Version 15 verschärften Schema-Berechtigungen sowie die Konfiguration des Remote-Zugriffs (`pg_hba.conf`, `postgresql.conf`) erforderten vertieftes Verständnis, das über reines SQL-Wissen hinausgeht. Auch die Wahl von CIDR-Notation statt einzelner Host-Einträge zeigte, wie Infrastrukturentscheidungen praxisnahe Probleme (dynamische IPs im Subnetz) lösen.
+ 
+Auf die Erstellung eines separaten konzeptionellen ER-Modells wurde bewusst verzichtet, da das Crow's-Foot-Diagramm bereits alle relevanten Informationen – Attribute, Schlüssel und Kardinalitäten – in einer einzigen, aussagekräftigeren Darstellung vereint.
+ 
+**Mögliche Erweiterungen (ausserhalb des aktuellen Projektumfangs):**
+- Einführung von Indizes auf häufig abgefragten Spalten (z. B. `Kunde.Email`, `Bestellung.KundeID`)
+- Trigger zur automatischen Aktualisierung eines Bestellstatus
+- Erweiterung um eine einfache Rollen- und Rechteverwaltung für unterschiedliche Nutzergruppen (z. B. Lager, Verkauf)
+- Anbindung an eine einfache Anwendung (Web-Frontend) zur Demonstration der Datenbank in Betrieb
+Insgesamt konnte mit überschaubarem Aufwand ein sauberes, normalisiertes und praxisnahes Datenbankschema realisiert werden, das die zentralen Konzepte des relationalen Datenbankdesigns – Normalisierung, referenzielle Integrität und Auflösung von M:N-Beziehungen – exemplarisch demonstriert.
  
 ---
  
 ## Anhang
  
-- 
+Der Anhang ist wie folgt gegliedert:
+ 
+Direkt-Link zu --> [Crow's-Foot-Diagramm](Anhang/Bilder/CrowsFoot.png)
+ 
+Pfad zu --> [CSV-Dateien](Anhang/Dateien/Dateien_CSV) *(Testdaten zum Befüllen der Tabellen)*
+ 
+Direkt-Link zu --> [SQL-Queries](Anhang/Dateien/meat_shop_querys.sql)
