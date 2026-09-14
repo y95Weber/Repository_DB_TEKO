@@ -14,7 +14,7 @@
 Im Rahmen dieses Schulprojekts wurde eine relationale Datenbank für einen fiktiven Online-Fleisch-/Metzgereishop (`meat.ch`) entworfen und implementiert. Ziel war es, ein vollständiges Datenmodell zu entwickeln und dieses als funktionsfähige PostgreSQL-Datenbank umzusetzen.
  
 **Projektumfang:**
-- Entwurf eines logischen Crow's-Foot-Diagramms als Datenmodell (auf ein separates konzeptionelles ER-Modell wurde verzichtet, da das Crow's-Foot-Diagramm bereits Attribute, Schlüssel und Kardinalitäten abbildet)
+- Entwurf eines logischen Crow's-Foot-Diagramms als Datenmodell
 - Implementierung des Schemas in PostgreSQL (Standard-SQL, DDL)
 - Kein GUI, keine Anwendungslogik
 - Keine erweiterten Datenbankfeatures (z. B. Trigger, Stored Procedures)
