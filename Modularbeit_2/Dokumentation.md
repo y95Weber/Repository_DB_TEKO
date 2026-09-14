@@ -1,8 +1,17 @@
-# Datenbankprojekt: Meat.ch
+# Modularbeit II Datenbanken und Big Data
+## Meat.ch der Online Fleisch Shop
+
+**Autor:** Yves
+**Modul:** Modularbeit II
+**Institution:** TEKO Bern
+**Dozent:** Christian Locher
+**Datum Abgabe:** 21.09.2026
+
+---
  
 ## 1. Einleitung
  
-Im Rahmen dieses Schulprojekts wurde eine relationale Datenbank für einen fiktiven Online-Fleisch-/Metzgereishop (`meat_shop`) entworfen und implementiert. Ziel war es, ein vollständiges Datenmodell zu entwickeln und dieses als funktionsfähige PostgreSQL-Datenbank umzusetzen.
+Im Rahmen dieses Schulprojekts wurde eine relationale Datenbank für einen fiktiven Online-Fleisch-/Metzgereishop (`meat.ch`) entworfen und implementiert. Ziel war es, ein vollständiges Datenmodell zu entwickeln und dieses als funktionsfähige PostgreSQL-Datenbank umzusetzen.
  
 **Projektumfang:**
 - Entwurf eines logischen Crow's-Foot-Diagramms als Datenmodell (auf ein separates konzeptionelles ER-Modell wurde verzichtet, da das Crow's-Foot-Diagramm bereits Attribute, Schlüssel und Kardinalitäten abbildet)
@@ -28,19 +37,19 @@ Da es sich beim Fleisch-Onlineshop um klar strukturierte, stark verknüpfte Date
 **Vorteile:**
 - Open Source, keine Lizenzkosten
 - Sehr standardkonformes SQL
-- Starke Unterstützung für Constraints (`CHECK`, `FOREIGN KEY`, `UNIQUE`) – wichtig für ein sauberes 3NF-Schema
+- Starke Unterstützung für Constraints (`CHECK`, `FOREIGN KEY`, `UNIQUE`). Wichtig für ein sauberes 3NF-Schema
 - Hohe Verbreitung in der Praxis, guter Lerneffekt
 - Umfangreiche, gute Dokumentation
 **Nachteile:**
 - Für ein Projekt dieser Größenordnung funktional überdimensioniert
-- Administration (Rollen, Rechte, `pg_hba.conf`) komplexer als bei einfacheren Systemen (z. B. SQLite)
+- Administration (Rollen, Rechte, `pg_hba.conf`) komplexer als bei einfacheren Systemen (z.B. SQLite)
 - Erfordert einen dauerhaft laufenden Serverprozess, kein Einzeldatei-Format
 ### 2.2 DBeaver
  
 DBeaver ist ein universeller, grafischer SQL-Client zur Verwaltung verschiedenster Datenbanksysteme.
  
 **Begründung der Wahl:**
-Da die PostgreSQL-Instanz auf einer separaten Debian-VM läuft und remote vom Windows-Host aus administriert werden musste, wurde ein plattformunabhängiger Client mit stabiler Remote-Verbindung benötigt. DBeaver Community Edition erfüllt diese Anforderung kostenlos.
+Da die PostgreSQL-Instanz auf einer separaten Debian-VM läuft und remote vom Windows-Host aus administriert werden soll, wurde ein plattformunabhängiger Client mit stabiler Remote-Verbindung benötigt. DBeaver Community Edition erfüllt diese Anforderung kostenlos.
  
 **Vorteile:**
 - Kostenlose Community Edition
@@ -48,6 +57,7 @@ Da die PostgreSQL-Instanz auf einer separaten Debian-VM läuft und remote vom Wi
 - Unterstützt viele verschiedene DBMS, nicht nur PostgreSQL
 - SQL-Script-Editor eignet sich gut zur nachvollziehbaren, dokumentierbaren Skripterstellung
 - Übersichtliche grafische Darstellung von Schema und Tabellen
+
 **Nachteile:**
 - Integrierte ER-Diagramme sind rein technisch und kein Ersatz für ein formelles Crow's-Foot-Diagramm
 - Community Edition mit eingeschränktem Funktionsumfang gegenüber der Enterprise-Version
@@ -59,7 +69,7 @@ Da die PostgreSQL-Instanz auf einer separaten Debian-VM läuft und remote vom Wi
 - **Datenbankserver:** PostgreSQL 17 auf einer Debian-VM
 - **Client:** DBeaver Community Edition auf einem Windows-Host, Remote-Zugriff auf die VM
 - **Setup-Hinweise:**
-  - PostgreSQL 15+ erfordert explizite Schema-Ownership zusätzlich zu Datenbank-Rechten (`GRANT ALL PRIVILEGES ON DATABASE` allein reicht nicht mehr aus) – gelöst über `ALTER DATABASE` und `ALTER SCHEMA` Ownership-Änderungen
+  - PostgreSQL 15+ erfordert explizite Schema-Ownership zusätzlich zu Datenbank-Rechten (`GRANT ALL PRIVILEGES ON DATABASE` allein reicht nicht mehr aus). Wurde gelöst über `ALTER DATABASE` und `ALTER SCHEMA` Ownership-Änderungen
   - Zugriff aus dem Netzwerk wurde über `pg_hba.conf` mit `scram-sha-256`-Authentifizierung und CIDR-Notation (z. B. `10.2.4.0/24`) konfiguriert, um dynamische IPs im Subnetz abzudecken
   - `listen_addresses = '*'` in `postgresql.conf` gesetzt, um Remote-Verbindungen zuzulassen
   - `systemctl enable --now postgresql` sorgt für automatischen Start beim Booten
@@ -75,12 +85,12 @@ Das Diagramm zeigt das logische Datenmodell in Crow's-Foot-Notation: alle sechs 
  
 **Entitäten:**
  
-- **Tierart** – Art des verarbeiteten Tieres (z. B. Rind, Schwein)
-- **Zuschnitt** – Zuschnittsart des Fleischstücks (z. B. Filet, Hüfte)
-- **Kunde** – Kundendaten inkl. Kontaktdaten und Adresse
-- **Produkt** – Verkaufbares Produkt, verknüpft mit genau einer Tierart und einem Zuschnitt
-- **Bestellung** – Bestellkopf, verknüpft mit genau einem Kunden
-- **Bestellposition** – Auflösung der M:N-Beziehung zwischen Bestellung und Produkt, inkl. Menge und historischem Einzelpreis; zusammengesetzter Primärschlüssel aus `BestellungID` und `ProduktID`
+- **Tierart:** Art des verarbeiteten Tieres (z. B. Rind, Schwein)
+- **Zuschnitt:** Zuschnittsart des Fleischstücks (z. B. Filet, Hüfte)
+- **Kunde:** Kundendaten inkl. Kontaktdaten und Adresse
+- **Produkt:** Verkaufbares Produkt, verknüpft mit genau einer Tierart und einem Zuschnitt
+- **Bestellung:** Bestellkopf, verknüpft mit genau einem Kunden
+- **Bestellposition:** Auflösung der M:N-Beziehung zwischen Bestellung und Produkt, inkl. Menge und historischem Einzelpreis; zusammengesetzter Primärschlüssel aus `BestellungID` und `ProduktID`
 **Beziehungen und Kardinalitäten:**
  
 | Beziehung | Kardinalität | Bedeutung |
@@ -100,7 +110,7 @@ Da `Bestellposition` sowohl `BestellungID` als auch `ProduktID` als Teil ihres P
 Das Schema erfüllt die **Dritte Normalform (3NF)**.
  
 **Bewusste Denormalisierung:**
-Das Feld `Einzelpreis` in der Tabelle `Bestellposition` wird redundant gespeichert, obwohl es sich theoretisch aus `Produkt.PreisProKg` ableiten ließe. Dies ist notwendig, um den historischen Preis zum Bestellzeitpunkt zu bewahren – ändert sich später der Produktpreis, bleiben vergangene Bestellungen unverändert korrekt.
+Das Feld `Einzelpreis` in der Tabelle `Bestellposition` wird redundant gespeichert, obwohl es sich theoretisch aus `Produkt.PreisProKg` ableiten ließe. Dies ist notwendig, um den historischen Preis zum Bestellzeitpunkt zu bewahren. Ändert sich später der Produktpreis, bleiben vergangene Bestellungen unverändert korrekt.
  
 ---
  
@@ -110,12 +120,12 @@ Das Feld `Einzelpreis` in der Tabelle `Bestellposition` wird redundant gespeiche
  
 | Tabelle | Spalten | Wichtige Constraints |
 |---|---|---|
-| `Tierart` | TierartID, Bezeichnung | `PRIMARY KEY` (TierartID), `UNIQUE` + `NOT NULL` (Bezeichnung) |
-| `Zuschnitt` | ZuschnittID, Bezeichnung | `PRIMARY KEY` (ZuschnittID), `UNIQUE` + `NOT NULL` (Bezeichnung) |
-| `Kunde` | KundeID, Vorname, Nachname, Email, Telefon, Strasse, PLZ, Ort | `PRIMARY KEY` (KundeID), `NOT NULL` (Vorname, Nachname, Email), `UNIQUE` (Email) |
-| `Produkt` | ProduktID, Name, PreisProKg, VerpackungsGewicht, Beschreibung, TierartID, ZuschnittID | `PRIMARY KEY` (ProduktID), `FOREIGN KEY` → Tierart, Zuschnitt, `CHECK` (Preis/Gewicht > 0) |
-| `Bestellung` | BestellungID, KundeID, Bestelldatum, Status, Lieferart | `PRIMARY KEY` (BestellungID), `FOREIGN KEY` → Kunde, `NOT NULL` (Bestelldatum, Status, Lieferart) |
-| `Bestellposition` | BestellungID, ProduktID, Menge, Einzelpreis | Composite `PRIMARY KEY` (BestellungID, ProduktID), `FOREIGN KEY` → Bestellung, Produkt, `CHECK` (Menge/Einzelpreis > 0) |
+| `Tierart` | tierartid, bezeichnung | `PRIMARY KEY` (TierartID), `UNIQUE` + `NOT NULL` (Bezeichnung) |
+| `Zuschnitt` | zuschnittid, bezeichnung | `PRIMARY KEY` (ZuschnittID), `UNIQUE` + `NOT NULL` (Bezeichnung) |
+| `Kunde` | kundeid, vorname, nachname, email, telefon, strasse, plz, ort | `PRIMARY KEY` (KundeID), `NOT NULL` (Vorname, Nachname, Email), `UNIQUE` (Email) |
+| `Produkt` | produktid, tierartid, zuschnittid, name, preisprokg, verpackungsgewicht, beschreibung | `PRIMARY KEY` (ProduktID), `FOREIGN KEY` → Tierart, Zuschnitt, `CHECK` (Preis/Gewicht > 0) |
+| `Bestellung` | bestellungid, kundeid, bestelldatum, status, lieferart | `PRIMARY KEY` (BestellungID), `FOREIGN KEY` → Kunde, `NOT NULL` (Bestelldatum, Status, Lieferart) |
+| `Bestellposition` | bestellungid, produktid, menge, einzelpreis | Composite `PRIMARY KEY` (BestellungID, ProduktID), `FOREIGN KEY` → Bestellung, Produkt, `CHECK` (Menge/Einzelpreis > 0) |
  
 ### 6.2 Erstellungsreihenfolge
  
@@ -188,18 +198,18 @@ CREATE TABLE Bestellposition (
  
 ## 7. Fazit
  
-Im Rahmen dieses Projekts wurde ein vollständiges relationales Datenmodell für einen fiktiven Online-Fleisch-/Metzgereishop entworfen und als funktionsfähige PostgreSQL-Datenbank umgesetzt. Das sechs-Tabellen-Schema erfüllt die Dritte Normalform, mit einer bewussten Ausnahme (`Einzelpreis`), die zur Bewahrung historischer Bestelldaten notwendig ist.
+Im Rahmen dieses Projekts wurde ein vollständiges relationales Datenmodell für einen fiktiven Online-Fleischshop entworfen und als funktionsfähige PostgreSQL-Datenbank umgesetzt. Das sechs-Tabellen-Schema erfüllt die Dritte Normalform, mit einer bewussten Ausnahme (`Einzelpreis`), die zur Bewahrung historischer Bestelldaten notwendig ist.
  
 Ein wichtiger Erkenntnisgewinn lag in der praktischen Administration von PostgreSQL: Insbesondere die seit Version 15 verschärften Schema-Berechtigungen sowie die Konfiguration des Remote-Zugriffs (`pg_hba.conf`, `postgresql.conf`) erforderten vertieftes Verständnis, das über reines SQL-Wissen hinausgeht. Auch die Wahl von CIDR-Notation statt einzelner Host-Einträge zeigte, wie Infrastrukturentscheidungen praxisnahe Probleme (dynamische IPs im Subnetz) lösen.
  
-Auf die Erstellung eines separaten konzeptionellen ER-Modells wurde bewusst verzichtet, da das Crow's-Foot-Diagramm bereits alle relevanten Informationen – Attribute, Schlüssel und Kardinalitäten – in einer einzigen, aussagekräftigeren Darstellung vereint.
+Als ER-Modell wurde das Crow's Foot Diagramm gewählt da es bereits alle relevanten Informationen wie Attribute, Schlüssel und Kardinalitäten in einer einzigen, aussagekräftigeren Darstellung vereint.
  
 **Mögliche Erweiterungen (ausserhalb des aktuellen Projektumfangs):**
 - Einführung von Indizes auf häufig abgefragten Spalten (z. B. `Kunde.Email`, `Bestellung.KundeID`)
 - Trigger zur automatischen Aktualisierung eines Bestellstatus
 - Erweiterung um eine einfache Rollen- und Rechteverwaltung für unterschiedliche Nutzergruppen (z. B. Lager, Verkauf)
-- Anbindung an eine einfache Anwendung (Web-Frontend) zur Demonstration der Datenbank in Betrieb
-Insgesamt konnte mit überschaubarem Aufwand ein sauberes, normalisiertes und praxisnahes Datenbankschema realisiert werden, das die zentralen Konzepte des relationalen Datenbankdesigns – Normalisierung, referenzielle Integrität und Auflösung von M:N-Beziehungen – exemplarisch demonstriert.
+- Anbindung an eine einfache Anwendung (Web-Frontend) zur Demonstration der Datenbank im Betrieb
+Insgesamt konnte mit überschaubarem Aufwand ein sauberes, normalisiertes und praxisnahes Datenbankschema realisiert werden, das die zentralen Konzepte des relationalen Datenbankdesigns wie Normalisierung, referenzielle Integrität und Auflösung von M:N-Beziehungen exemplarisch demonstriert.
  
 ---
  
