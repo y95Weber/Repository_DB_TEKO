@@ -1,7 +1,7 @@
 # Modularbeit II
 ## Meat.ch der Online Fleisch Shop
 
-**Autor:** Yves
+**Autor:** Yves Weber
 **Modul:** Datenbanken und Big-Data
 **Institution:** TEKO Bern
 **Dozent:** Christian Locher
